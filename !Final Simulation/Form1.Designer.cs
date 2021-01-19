@@ -37,10 +37,6 @@
             this.mInput = new System.Windows.Forms.TextBox();
             this.nInput = new System.Windows.Forms.TextBox();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
-            this.radioBrownian = new System.Windows.Forms.RadioButton();
-            this.radioPoisson = new System.Windows.Forms.RadioButton();
-            this.radioGeometricBrownian = new System.Windows.Forms.RadioButton();
-            this.radioVasicek = new System.Windows.Forms.RadioButton();
             this.lambdaInput = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.muInput = new System.Windows.Forms.TextBox();
@@ -54,6 +50,8 @@
             this.kInput = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
             this.debugLabel = new System.Windows.Forms.RichTextBox();
+            this.functionSelector = new System.Windows.Forms.ComboBox();
+            this.label9 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -140,60 +138,6 @@
             this.progressBar1.Size = new System.Drawing.Size(866, 30);
             this.progressBar1.Step = 1;
             this.progressBar1.TabIndex = 17;
-            // 
-            // radioBrownian
-            // 
-            this.radioBrownian.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.radioBrownian.AutoSize = true;
-            this.radioBrownian.ForeColor = System.Drawing.SystemColors.ControlLight;
-            this.radioBrownian.Location = new System.Drawing.Point(943, 43);
-            this.radioBrownian.Name = "radioBrownian";
-            this.radioBrownian.Size = new System.Drawing.Size(152, 24);
-            this.radioBrownian.TabIndex = 18;
-            this.radioBrownian.Text = "Brownian Motion";
-            this.radioBrownian.UseVisualStyleBackColor = true;
-            this.radioBrownian.CheckedChanged += new System.EventHandler(this.radioBrownian_CheckedChanged);
-            // 
-            // radioPoisson
-            // 
-            this.radioPoisson.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.radioPoisson.AutoSize = true;
-            this.radioPoisson.Checked = true;
-            this.radioPoisson.ForeColor = System.Drawing.SystemColors.ControlLight;
-            this.radioPoisson.Location = new System.Drawing.Point(943, 17);
-            this.radioPoisson.Name = "radioPoisson";
-            this.radioPoisson.Size = new System.Drawing.Size(141, 24);
-            this.radioPoisson.TabIndex = 19;
-            this.radioPoisson.TabStop = true;
-            this.radioPoisson.Text = "Poisson Jumps";
-            this.radioPoisson.UseVisualStyleBackColor = true;
-            this.radioPoisson.CheckedChanged += new System.EventHandler(this.radioPoisson_CheckedChanged);
-            // 
-            // radioGeometricBrownian
-            // 
-            this.radioGeometricBrownian.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.radioGeometricBrownian.AutoSize = true;
-            this.radioGeometricBrownian.ForeColor = System.Drawing.SystemColors.ControlLight;
-            this.radioGeometricBrownian.Location = new System.Drawing.Point(1101, 19);
-            this.radioGeometricBrownian.Name = "radioGeometricBrownian";
-            this.radioGeometricBrownian.Size = new System.Drawing.Size(230, 24);
-            this.radioGeometricBrownian.TabIndex = 21;
-            this.radioGeometricBrownian.Text = "Geometric Brownian Motion";
-            this.radioGeometricBrownian.UseVisualStyleBackColor = true;
-            this.radioGeometricBrownian.CheckedChanged += new System.EventHandler(this.radioGeometricBrownian_CheckedChanged);
-            // 
-            // radioVasicek
-            // 
-            this.radioVasicek.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.radioVasicek.AutoSize = true;
-            this.radioVasicek.ForeColor = System.Drawing.SystemColors.ControlLight;
-            this.radioVasicek.Location = new System.Drawing.Point(1101, 43);
-            this.radioVasicek.Name = "radioVasicek";
-            this.radioVasicek.Size = new System.Drawing.Size(162, 24);
-            this.radioVasicek.TabIndex = 22;
-            this.radioVasicek.Text = "Vasicek\'s Process";
-            this.radioVasicek.UseVisualStyleBackColor = true;
-            this.radioVasicek.CheckedChanged += new System.EventHandler(this.radioVasicek_CheckedChanged);
             // 
             // lambdaInput
             // 
@@ -300,11 +244,38 @@
             // debugLabel
             // 
             this.debugLabel.Font = new System.Drawing.Font("Courier New", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.debugLabel.Location = new System.Drawing.Point(1337, 17);
+            this.debugLabel.Location = new System.Drawing.Point(1195, 17);
             this.debugLabel.Name = "debugLabel";
-            this.debugLabel.Size = new System.Drawing.Size(338, 54);
+            this.debugLabel.Size = new System.Drawing.Size(480, 52);
             this.debugLabel.TabIndex = 36;
             this.debugLabel.Text = "";
+            // 
+            // functionSelector
+            // 
+            this.functionSelector.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.functionSelector.FormattingEnabled = true;
+            this.functionSelector.Items.AddRange(new object[] {
+            "Poisson Jumps",
+            "Geometric Brownian Motion",
+            "Brownian Motion",
+            "Vasicek\'s Process",
+            "Rademacher Jumps"});
+            this.functionSelector.Location = new System.Drawing.Point(943, 39);
+            this.functionSelector.Name = "functionSelector";
+            this.functionSelector.Size = new System.Drawing.Size(246, 28);
+            this.functionSelector.TabIndex = 37;
+            this.functionSelector.SelectedIndexChanged += new System.EventHandler(this.functionSelector_SelectedIndexChanged);
+            this.functionSelector.SelectedIndex = 0;
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.label9.Location = new System.Drawing.Point(943, 13);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(198, 20);
+            this.label9.TabIndex = 38;
+            this.label9.Text = "Select Simulation Function";
             // 
             // Form1
             // 
@@ -313,6 +284,8 @@
             this.AutoSize = true;
             this.BackColor = System.Drawing.SystemColors.HotTrack;
             this.ClientSize = new System.Drawing.Size(1821, 1345);
+            this.Controls.Add(this.label9);
+            this.Controls.Add(this.functionSelector);
             this.Controls.Add(this.debugLabel);
             this.Controls.Add(this.kInput);
             this.Controls.Add(this.label8);
@@ -326,10 +299,6 @@
             this.Controls.Add(this.label4);
             this.Controls.Add(this.lambdaInput);
             this.Controls.Add(this.label3);
-            this.Controls.Add(this.radioVasicek);
-            this.Controls.Add(this.radioGeometricBrownian);
-            this.Controls.Add(this.radioPoisson);
-            this.Controls.Add(this.radioBrownian);
             this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.nInput);
             this.Controls.Add(this.mInput);
@@ -359,10 +328,6 @@
         private System.Windows.Forms.TextBox mInput;
         private System.Windows.Forms.TextBox nInput;
         private System.Windows.Forms.ProgressBar progressBar1;
-        private System.Windows.Forms.RadioButton radioBrownian;
-        private System.Windows.Forms.RadioButton radioPoisson;
-        private System.Windows.Forms.RadioButton radioGeometricBrownian;
-        private System.Windows.Forms.RadioButton radioVasicek;
         private System.Windows.Forms.TextBox lambdaInput;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox muInput;
@@ -376,6 +341,8 @@
         private System.Windows.Forms.TextBox kInput;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.RichTextBox debugLabel;
+        private System.Windows.Forms.ComboBox functionSelector;
+        private System.Windows.Forms.Label label9;
     }
 }
 

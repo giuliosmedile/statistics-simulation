@@ -66,7 +66,7 @@ namespace _Final_Simulation
             this.startInput.Text = startingValue.ToString();
             this.kInput.Text = k.ToString();
 
-            this.radioPoisson_CheckedChanged(sender, e);
+            this.Poisson_Selected();
         }
 
         private void compute_Click(object sender, EventArgs e)
@@ -134,16 +134,6 @@ namespace _Final_Simulation
             chart = new Rectangle(0, 0, this.pictureBox1.Width - 60, this.pictureBox1.Height);
         }
 
-
-        double brownianStep(double k)
-        {
-            double plusOrMinus = R.NextDouble() < 0.5 ? -1 : 1;
-            double zeta = R.NextDouble();
-            double result = (double)sigma * sqrt * zeta * plusOrMinus;
-            //Debug.WriteLine("Result: " + plusOrMinus);
-            return result;
-        }
-
         double poissonStep(double k)
         {
             float prob = (float)lambda / 100;
@@ -156,6 +146,15 @@ namespace _Final_Simulation
             {
                 return 0;
             }
+        }
+
+        double brownianStep(double k)
+        {
+            double plusOrMinus = R.NextDouble() < 0.5 ? -1 : 1;
+            double zeta = R.NextDouble();
+            double result = (double)sigma * sqrt * zeta * plusOrMinus;
+            //Debug.WriteLine("Result: " + plusOrMinus);
+            return result;
         }
 
         double geometricBrownianStep(double prevVal)
@@ -171,6 +170,12 @@ namespace _Final_Simulation
             double step = 1d / n;
             double result = (1 - a * step) * prevVal + a * b * step + sigma * Math.Sqrt(step) * SampleGaussian(0, 1);
             return result;
+        }
+
+        double rademacherStep(double k)
+        {
+            return R.NextDouble() < 0.5 ? -1 : 1;
+
         }
 
         void randomVariables()
@@ -195,6 +200,9 @@ namespace _Final_Simulation
                     selectedFunction = vasicekStep;
                     value = startingValue;
                     break;
+                case 5:
+                    selectedFunction = rademacherStep;
+                    break;
                 default:
                     selectedFunction = poissonStep;
                     debugLabel.Text = "Error while choosing which function to compute steps with. Using Poisson one instead.";
@@ -215,8 +223,8 @@ namespace _Final_Simulation
                     
                     switch (selectedMethod)
                     {
-                        //step for geometric and poisson
-                        case 1: case 3:
+                        //step for geometric, poisson and rademacher
+                        case 1: case 3: case 5:
                             step = (float)selectedFunction(i);
                             value = pointsList[i].Y + step;
                             break;
@@ -275,7 +283,7 @@ namespace _Final_Simulation
             //Draw 0 line
             int xZero = 0;
             int yZero = transformYViewport(0, chart, minY, rangeY);
-            Debug.WriteLine("x: " + xZero + "; y: " + yZero);
+            //Debug.WriteLine("x: " + xZero + "; y: " + yZero);
 
             g.DrawLine(Pens.White, new Point(xZero, yZero), new Point(xZero + pictureBox1.Width, yZero));
         }
@@ -319,7 +327,37 @@ namespace _Final_Simulation
             return result;
         }
 
-        private void radioPoisson_CheckedChanged(object sender, EventArgs e)
+        // ------------------------------------------------------------------------
+        // ---------------------------Function Selectors---------------------------
+        // ------------------------------------------------------------------------
+        private void functionSelector_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            selectedMethod = functionSelector.SelectedIndex + 1;
+
+            switch (selectedMethod)
+            {
+                case 1:
+                    this.Poisson_Selected();
+                    break;
+                case 2:
+                    this.GeometricBrownian_Selected();
+                    break;
+                case 3:
+                    this.Brownian_Selected();
+                    break;
+                case 4:
+                    this.Vasicek_Selected();
+                    break;
+                case 5:
+                    this.Rademacher_Selected();
+                    break;
+                default:
+                    this.Poisson_Selected();
+                    break;
+            }
+        }
+
+        private void Poisson_Selected()
         {
             selectedMethod = 1;
             lambdaInput.Enabled = true;
@@ -330,7 +368,7 @@ namespace _Final_Simulation
             startInput.Enabled = false;
         }
 
-        private void radioGeometricBrownian_CheckedChanged(object sender, EventArgs e)
+        private void GeometricBrownian_Selected()
         {
             selectedMethod = 2;
             lambdaInput.Enabled = false;
@@ -341,7 +379,7 @@ namespace _Final_Simulation
             startInput.Enabled = true;
         }
 
-        private void radioBrownian_CheckedChanged(object sender, EventArgs e)
+        private void Brownian_Selected()
         {
             selectedMethod = 3;
             lambdaInput.Enabled = false;
@@ -352,7 +390,7 @@ namespace _Final_Simulation
             startInput.Enabled = false;
         }
 
-        private void radioVasicek_CheckedChanged(object sender, EventArgs e)
+        private void Vasicek_Selected()
         {
             selectedMethod = 4;
             lambdaInput.Enabled = false;
@@ -361,6 +399,17 @@ namespace _Final_Simulation
             aInput.Enabled = true;
             bInput.Enabled = true;
             startInput.Enabled = true;
+        }
+
+        private void Rademacher_Selected()
+        {
+            selectedMethod = 5;
+            lambdaInput.Enabled = false;
+            sigmaInput.Enabled = false;
+            muInput.Enabled = false;
+            aInput.Enabled = false;
+            bInput.Enabled = false;
+            startInput.Enabled = false;
         }
 
         // ------------------------------------------------------------------------
@@ -393,5 +442,6 @@ namespace _Final_Simulation
             return y1 * stddev + mean;
         }
 
+        
     }
 }
