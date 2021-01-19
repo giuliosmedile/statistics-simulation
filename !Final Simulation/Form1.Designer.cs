@@ -146,7 +146,7 @@
             this.radioBrownian.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.radioBrownian.AutoSize = true;
             this.radioBrownian.ForeColor = System.Drawing.SystemColors.ControlLight;
-            this.radioBrownian.Location = new System.Drawing.Point(943, 39);
+            this.radioBrownian.Location = new System.Drawing.Point(943, 43);
             this.radioBrownian.Name = "radioBrownian";
             this.radioBrownian.Size = new System.Drawing.Size(152, 24);
             this.radioBrownian.TabIndex = 18;
@@ -160,7 +160,7 @@
             this.radioPoisson.AutoSize = true;
             this.radioPoisson.Checked = true;
             this.radioPoisson.ForeColor = System.Drawing.SystemColors.ControlLight;
-            this.radioPoisson.Location = new System.Drawing.Point(943, 13);
+            this.radioPoisson.Location = new System.Drawing.Point(943, 17);
             this.radioPoisson.Name = "radioPoisson";
             this.radioPoisson.Size = new System.Drawing.Size(141, 24);
             this.radioPoisson.TabIndex = 19;
@@ -174,7 +174,7 @@
             this.radioGeometricBrownian.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.radioGeometricBrownian.AutoSize = true;
             this.radioGeometricBrownian.ForeColor = System.Drawing.SystemColors.ControlLight;
-            this.radioGeometricBrownian.Location = new System.Drawing.Point(1101, 15);
+            this.radioGeometricBrownian.Location = new System.Drawing.Point(1101, 19);
             this.radioGeometricBrownian.Name = "radioGeometricBrownian";
             this.radioGeometricBrownian.Size = new System.Drawing.Size(230, 24);
             this.radioGeometricBrownian.TabIndex = 21;
@@ -187,7 +187,7 @@
             this.radioVasicek.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.radioVasicek.AutoSize = true;
             this.radioVasicek.ForeColor = System.Drawing.SystemColors.ControlLight;
-            this.radioVasicek.Location = new System.Drawing.Point(1101, 39);
+            this.radioVasicek.Location = new System.Drawing.Point(1101, 43);
             this.radioVasicek.Name = "radioVasicek";
             this.radioVasicek.Size = new System.Drawing.Size(162, 24);
             this.radioVasicek.TabIndex = 22;
