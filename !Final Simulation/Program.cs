@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace _Final_Simulation
+namespace GiulioSmedile_Simulation
 {
     static class Program
     {

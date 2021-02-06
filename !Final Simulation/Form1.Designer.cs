@@ -1,4 +1,4 @@
-﻿namespace _Final_Simulation
+﻿namespace GiulioSmedile_Simulation
 {
     partial class Form1
     {
@@ -44,9 +44,9 @@
             this.startInput = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
             this.bInput = new System.Windows.Forms.TextBox();
-            this.label6 = new System.Windows.Forms.Label();
+            this.labelB = new System.Windows.Forms.Label();
             this.aInput = new System.Windows.Forms.TextBox();
-            this.label7 = new System.Windows.Forms.Label();
+            this.labelA = new System.Windows.Forms.Label();
             this.kInput = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
             this.debugLabel = new System.Windows.Forms.RichTextBox();
@@ -152,9 +152,9 @@
             this.label3.ForeColor = System.Drawing.SystemColors.ControlLight;
             this.label3.Location = new System.Drawing.Point(376, 17);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(130, 20);
+            this.label3.Size = new System.Drawing.Size(87, 20);
             this.label3.TabIndex = 24;
-            this.label3.Text = "Probability (λ) [%]";
+            this.label3.Text = "Chance (λ)";
             // 
             // muInput
             // 
@@ -197,15 +197,15 @@
             this.bInput.Size = new System.Drawing.Size(100, 26);
             this.bInput.TabIndex = 31;
             // 
-            // label6
+            // labelB
             // 
-            this.label6.AutoSize = true;
-            this.label6.ForeColor = System.Drawing.SystemColors.ControlLight;
-            this.label6.Location = new System.Drawing.Point(376, 77);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(78, 20);
-            this.label6.TabIndex = 30;
-            this.label6.Text = "Target (b)";
+            this.labelB.AutoSize = true;
+            this.labelB.ForeColor = System.Drawing.SystemColors.ControlLight;
+            this.labelB.Location = new System.Drawing.Point(376, 77);
+            this.labelB.Name = "labelB";
+            this.labelB.Size = new System.Drawing.Size(78, 20);
+            this.labelB.TabIndex = 30;
+            this.labelB.Text = "Target (b)";
             // 
             // aInput
             // 
@@ -214,15 +214,15 @@
             this.aInput.Size = new System.Drawing.Size(100, 26);
             this.aInput.TabIndex = 29;
             // 
-            // label7
+            // labelA
             // 
-            this.label7.AutoSize = true;
-            this.label7.ForeColor = System.Drawing.SystemColors.ControlLight;
-            this.label7.Location = new System.Drawing.Point(235, 77);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(79, 20);
-            this.label7.TabIndex = 28;
-            this.label7.Text = "Speed (a)";
+            this.labelA.AutoSize = true;
+            this.labelA.ForeColor = System.Drawing.SystemColors.ControlLight;
+            this.labelA.Location = new System.Drawing.Point(235, 77);
+            this.labelA.Name = "labelA";
+            this.labelA.Size = new System.Drawing.Size(79, 20);
+            this.labelA.TabIndex = 28;
+            this.labelA.Text = "Speed (a)";
             // 
             // kInput
             // 
@@ -255,11 +255,13 @@
             this.functionSelector.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.functionSelector.FormattingEnabled = true;
             this.functionSelector.Items.AddRange(new object[] {
-            "Poisson Jumps",
+            "Bernoulli Process",
             "Geometric Brownian Motion",
             "Brownian Motion",
             "Vasicek\'s Process",
-            "Rademacher Jumps"});
+            "Rademacher Process",
+            "Law of Large Numbers",
+            "Merton Jump Diffusion"});
             this.functionSelector.Location = new System.Drawing.Point(943, 39);
             this.functionSelector.Name = "functionSelector";
             this.functionSelector.Size = new System.Drawing.Size(246, 28);
@@ -292,9 +294,9 @@
             this.Controls.Add(this.startInput);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.bInput);
-            this.Controls.Add(this.label6);
+            this.Controls.Add(this.labelB);
             this.Controls.Add(this.aInput);
-            this.Controls.Add(this.label7);
+            this.Controls.Add(this.labelA);
             this.Controls.Add(this.muInput);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.lambdaInput);
@@ -309,7 +311,7 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.pictureBox1);
             this.Name = "Form1";
-            this.Text = "Brownian Motion";
+            this.Text = "Statistic Process Simulator";
             this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
@@ -335,9 +337,9 @@
         private System.Windows.Forms.TextBox startInput;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.TextBox bInput;
-        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Label labelB;
         private System.Windows.Forms.TextBox aInput;
-        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label labelA;
         private System.Windows.Forms.TextBox kInput;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.RichTextBox debugLabel;

@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace _Final_Simulation
+namespace GiulioSmedile_Simulation
 {
     public partial class Form1 : Form
     {
@@ -28,17 +28,18 @@ namespace _Final_Simulation
         int k = 2;
 
         double sigma = 0.10;                  //Brownian Motion user variable
-        double lambda = 10;                   //Poisson Process user variable
+        double lambda = 10;                   //Bernoulli Process user variable
         double mu = 0.10;                     //Geometric brownian motion user variable
         double a = 1;                         //Values for Vasicek's process
         double b = 5;
-        double startingValue = 4;             //Value for those processes that don't start at 0
+        double startingValue = 1;             //Value for those processes that don't start at 0
         double sqrt;
         float step = 0;
+        double b_iterator = 0, b_successes = 0;          //iteration values, used in the bernoulli trials
 
         Random R = new Random();
         Color[] Colors = new Color[] {
-            Color.Black, Color.White, Color.Blue, Color.Red, Color.Magenta, Color.Orange, Color.Gold, Color.Silver, Color.Green, Color.Teal, Color.Cyan, Color.Purple, Color.Pink
+            Color.Black, Color.White, Color.Blue, Color.Red, Color.Magenta, Color.Orange, Color.Brown, Color.DarkGreen, Color.Green, Color.Teal, Color.Cyan, Color.Purple, Color.Pink
         };
 
 
@@ -65,31 +66,30 @@ namespace _Final_Simulation
             this.bInput.Text = b.ToString();
             this.startInput.Text = startingValue.ToString();
             this.kInput.Text = k.ToString();
-
-            this.Poisson_Selected();
         }
 
         private void compute_Click(object sender, EventArgs e)
         {
             progressBar1.Value = 0;
             debugLabel.Text = "";
+            // Parse the input values from the Form, be careful those are actually numerical values...
             try
             {
                 n = Convert.ToInt32(this.nInput.Text);
                 m = Convert.ToInt32(this.mInput.Text);
-                a = Convert.ToDouble(this.aInput.Text);
-                b = Convert.ToDouble(this.bInput.Text);
-                mu = Convert.ToDouble(this.muInput.Text);
-                sigma = Convert.ToDouble(this.sigmaInput.Text);
-                lambda = Convert.ToDouble(this.lambdaInput.Text);
-                startingValue = Convert.ToDouble(this.startInput.Text);
+                a = Convert.ToDouble(this.aInput.Text, System.Globalization.CultureInfo.InvariantCulture);
+                b = Convert.ToDouble(this.bInput.Text, System.Globalization.CultureInfo.InvariantCulture);
+                mu = Convert.ToDouble(this.muInput.Text, System.Globalization.CultureInfo.InvariantCulture);
+                sigma = Convert.ToDouble(this.sigmaInput.Text, System.Globalization.CultureInfo.InvariantCulture);
+                lambda = Convert.ToDouble(this.lambdaInput.Text, System.Globalization.CultureInfo.InvariantCulture);
+                startingValue = Convert.ToDouble(this.startInput.Text, System.Globalization.CultureInfo.InvariantCulture);
                 k = Convert.ToInt32(this.kInput.Text);
             } catch (Exception ex)
             {
-                debugLabel.Text = "There is at least 1 \nillegal value. Using previous ones.";
+                debugLabel.Text = "There is at least one illegal value. Using previous ones.";
             }
 
-            //Watching for overflows/underflows that don't cause crashes
+            //Watching for overflows/underflows so those don't cause crashes
             lambda = lambda == 100 ? 99 : lambda;
             sigma = sigma == 0 ? 0.1 : sigma;
 
@@ -119,10 +119,11 @@ namespace _Final_Simulation
             draw();
             progressBar1.PerformStep();
             progressBar1.PerformStep();
-            drawChart();
+            if (drawChart() == -1) return;
             progressBar1.PerformStep();
             calcHistograms();
             progressBar1.PerformStep();
+
         }
 
         void initializeGraphics()
@@ -134,10 +135,16 @@ namespace _Final_Simulation
             chart = new Rectangle(0, 0, this.pictureBox1.Width - 60, this.pictureBox1.Height);
         }
 
-        double poissonStep(double k)
+
+        // ------------------------------------------------------------------------
+        // ---------------------------Function Computers---------------------------
+        // ------------------------------------------------------------------------
+
+        double bernoulliStep(double k)
         {
-            float prob = (float)lambda / 100;
-            float x = Convert.ToSingle(R.Next(-1000, +1000) * 0.001);
+            float prob = (float)lambda * 1f/(float)n;
+            //float x = Convert.ToSingle(R.Next(-1000, +1000) * 0.001);
+            float x = (float)R.NextDouble();
             if (x <= prob)
             {
                 return 1;
@@ -175,8 +182,41 @@ namespace _Final_Simulation
         double rademacherStep(double k)
         {
             return R.NextDouble() < 0.5 ? -1 : 1;
-
         }
+
+        double LLNStep(double prevVal)
+        {
+            b_iterator++;
+            double tmp = R.NextDouble();
+            if (tmp < lambda/100) b_successes++;
+            double result = b_successes / b_iterator;
+            return result;
+        }
+
+        double mertonStep(double prevVal)
+        {
+            //// The process can be approximated as a GBM plus a jump term
+            //return geometricBrownianStep(prevVal);
+
+            double result;
+            double dt = 1d / n;
+            double z1 = SampleGaussian(0, 1);
+            double z2 = SampleGaussian(0, 1);
+            double mu_y = Math.Exp(a + 0.5 * b * b);
+            double sigma2_y = Math.Exp(2 * a + b * b) * (Math.Exp(b * b) - 1);
+
+            double n_deltat = randomPoisson(lambda * dt) * dt;
+            double sigma_y = Math.Sqrt(sigma2_y);
+            double j = mu_y * n_deltat + sigma_y * z2 * Math.Sqrt(n_deltat);
+
+            result = prevVal * Math.Exp((mu - 0.5*(sigma * sigma)) * dt + sigma * Math.Sqrt(dt) * z1 + j);
+
+            return result;
+        }
+
+        // ------------------------------------------------------------------------
+        // ----------------------------Step Calculator-----------------------------
+        // ------------------------------------------------------------------------
 
         void randomVariables()
         {
@@ -187,7 +227,7 @@ namespace _Final_Simulation
             switch (selectedMethod)
             {
                 case 1:
-                    selectedFunction = poissonStep;
+                    selectedFunction = bernoulliStep;
                     break;
                 case 2:
                     selectedFunction = geometricBrownianStep;
@@ -203,12 +243,20 @@ namespace _Final_Simulation
                 case 5:
                     selectedFunction = rademacherStep;
                     break;
+                case 6:
+                    selectedFunction = LLNStep;
+                    break;
+                case 7:
+                    selectedFunction = mertonStep;
+                    value = startingValue;
+                    break;
                 default:
-                    selectedFunction = poissonStep;
-                    debugLabel.Text = "Error while choosing which function to compute steps with. Using Poisson one instead.";
+                    selectedFunction = bernoulliStep;
+                    debugLabel.Text = "Error while choosing which function to compute steps with. Using Bernoulli one instead.";
                     break;
             }
 
+            // For each path...
             for (int j = 0; j < m; j++)
             {
                 PointF point = new PointF();
@@ -217,24 +265,25 @@ namespace _Final_Simulation
                 pointsList.Add(point);
                 valuesList.Add(value);
 
+                // For each point in the path...
                 for (int i = 0; i < n; i++)
                 {
                     PointF p = new PointF();
                     
                     switch (selectedMethod)
                     {
-                        //step for geometric, poisson and rademacher
+                        //step for geometric, bernoulli and rademacher
                         case 1: case 3: case 5:
                             step = (float)selectedFunction(i);
                             value = pointsList[i].Y + step;
                             break;
-                        //step for geometric brownian and vasicek
-                        case 2: case 4:
+                        //step for geometric brownian, vasicek, bernoulli trials and merton
+                        case 2: case 4: case 6: case 7:
                             value = (float)selectedFunction(pointsList[i].Y);
                             break;                       
                         default:
-                            debugLabel.Text = "Error while computing. Using Poisson steps as a last resource.";
-                            step = (float)poissonStep(i);
+                            debugLabel.Text = "Error while computing. Using Bernoulli steps as a last resource.";
+                            step = (float)bernoulliStep(i);
                             value = pointsList[i].Y + step;
                             break;
                     }
@@ -243,39 +292,56 @@ namespace _Final_Simulation
                     p.Y = (float)value;
                     valuesList.Add(value);
 
-                    pointsList.Add(p);
+                    pointsList.Add(p);                    
                 }
 
                 variables.Add(pointsList.ToArray());
-
+                b_iterator = 0;
+                b_successes = 0;
                 pointsList.Clear();
-                value = selectedMethod == 2 || selectedMethod == 4 ? startingValue : 0;
+                // If I'm dealing with GBM, Vasicek or Merton, I have to reset the starting value at the user input value
+                value = (selectedMethod == 2 || selectedMethod == 4 || selectedMethod == 7) ? startingValue : 0;
                 
             }
         }
+
+        // ------------------------------------------------------------------------
+        // ---------------------------Drawing Functions----------------------------
+        // ------------------------------------------------------------------------
+
 
         void draw()
         {
             g.Clear(Color.Transparent);
             g.DrawRectangle(Pens.Black, chart);
-            g.FillRectangle(new SolidBrush(Color.DarkGray), chart);
+            g.FillRectangle(new SolidBrush(Color.LightGray), chart);
             pictureBox1.Image = bitmap;
         }
 
 
-        void drawChart()
+        int drawChart()
         {
-            for (int i = 0; i < m; i++)
+            int i = 0;
+            int j = 0;
+            for (i = 0; i < m; i++)
             {
                 int xDevice, yDevice;
-                for (int j = 0; j < n; j++)
-                {
-                    xDevice = transformXViewport(variables[i][j].X, chart, minX, rangeX);
-                    yDevice = transformYViewport(variables[i][j].Y, chart, minY, rangeY);
+                for (j = 0; j < n; j++)
+                 {
+                    try
+                    {
+                        xDevice = transformXViewport(variables[i][j].X, chart, minX, rangeX);
+                        yDevice = transformYViewport(variables[i][j].Y, chart, minY, rangeY);
 
-                    int xNext = transformXViewport(variables[i][j + 1].X, chart, minX, rangeX);
-                    int yNext = transformYViewport(variables[i][j + 1].Y, chart, minY, rangeY);
-                    g.DrawLine(new Pen(Color.FromArgb(100, Colors[i % Colors.Length])), new PointF(xDevice, yDevice), new PointF(xNext, yNext));
+                        int xNext = transformXViewport(variables[i][j + 1].X, chart, minX, rangeX);
+                        int yNext = transformYViewport(variables[i][j + 1].Y, chart, minY, rangeY);
+                    
+                        g.DrawLine(new Pen(Color.FromArgb(100, Colors[i % Colors.Length])), new PointF(xDevice, yDevice), new PointF(xNext, yNext));
+                    } catch (Exception ex)
+                    {
+                        debugLabel.Text = "Couldn't complete simulation because some results are out-of-range. Please change the simulation parameters.";
+                        return -1;
+                    }
                 }
 
             }
@@ -286,6 +352,7 @@ namespace _Final_Simulation
             //Debug.WriteLine("x: " + xZero + "; y: " + yZero);
 
             g.DrawLine(Pens.White, new Point(xZero, yZero), new Point(xZero + pictureBox1.Width, yZero));
+            return 0;
         }
 
         void calcHistograms()
@@ -295,7 +362,7 @@ namespace _Final_Simulation
             {
                 List<double> histList = new List<double>();
                 histList = getValuesFromPoints(i * n / k, variables);
-                Histogram hist = new Histogram(histList, 10);
+                Histogram hist = new Histogram(histList, 15);
 
                 //calculate the rectangle on which the histogram is drawn
                 int iViewportX = transformXViewport(i * n / k, chart, minX, rangeX);
@@ -337,7 +404,7 @@ namespace _Final_Simulation
             switch (selectedMethod)
             {
                 case 1:
-                    this.Poisson_Selected();
+                    this.Bernoulli_Selected();
                     break;
                 case 2:
                     this.GeometricBrownian_Selected();
@@ -351,13 +418,19 @@ namespace _Final_Simulation
                 case 5:
                     this.Rademacher_Selected();
                     break;
+                case 6:
+                    this.LLN_Selected();
+                    break;
+                case 7:
+                    this.Merton_Selected();
+                    break;
                 default:
-                    this.Poisson_Selected();
+                    this.Bernoulli_Selected();
                     break;
             }
         }
 
-        private void Poisson_Selected()
+        private void Bernoulli_Selected()
         {
             selectedMethod = 1;
             lambdaInput.Enabled = true;
@@ -399,6 +472,8 @@ namespace _Final_Simulation
             aInput.Enabled = true;
             bInput.Enabled = true;
             startInput.Enabled = true;
+            labelA.Text = "Speed (a)";
+            labelB.Text = "Target (b)";
         }
 
         private void Rademacher_Selected()
@@ -410,6 +485,45 @@ namespace _Final_Simulation
             aInput.Enabled = false;
             bInput.Enabled = false;
             startInput.Enabled = false;
+        }
+
+        private void LLN_Selected()
+        {
+            selectedMethod = 6;
+            lambdaInput.Enabled = true;
+            sigmaInput.Enabled = false;
+            muInput.Enabled = false;
+            aInput.Enabled = false;
+            bInput.Enabled = false;
+            startInput.Enabled = false;
+        }
+
+        private void Merton_Selected()
+        {
+            selectedMethod = 7;
+            lambdaInput.Enabled = true;
+            sigmaInput.Enabled = true;
+            muInput.Enabled = true;
+            aInput.Enabled = true;
+            bInput.Enabled = true;
+            startInput.Enabled = true;
+            labelA.Text = "a";
+            labelB.Text = "b";
+
+            sigma = 0.1;
+            lambda = 150;
+            mu = 0;
+            a = 1;
+            b = 0.2;
+            startingValue = 1;
+
+            sigmaInput.Text = "0,1";
+            lambdaInput.Text = "150";
+            muInput.Text = "0";
+            aInput.Text = "1";
+            bInput.Text = "0.2";
+            startInput.Text = "1";
+
         }
 
         // ------------------------------------------------------------------------
@@ -429,6 +543,19 @@ namespace _Final_Simulation
         {
             //Linear interpolation
             return ((NewMax - NewMin) / (OldMax - OldMin)) * (Value - OldMin) + NewMin;
+        }
+
+        private double randomPoisson(double lambda)
+        {
+            double p = 1.0, L = Math.Exp(-lambda);
+            int k = 0;
+            do
+            {
+                k++;
+                p *= R.NextDouble();
+            }
+            while (p > L);
+            return k - 1;
         }
 
         public double SampleGaussian(double mean, double stddev)

@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace _Final_Simulation
+namespace GiulioSmedile_Simulation
 {
     class Histogram
     {
@@ -139,7 +139,7 @@ namespace _Final_Simulation
                 {
                     double width = Interpolate(interval.count, 0, maxDistr, 0, viewport.Width);
                     Rectangle bar = new Rectangle(viewport.X, viewport.Y + viewport.Height - histogramBarHeight - i * histogramBarHeight, (int)width, histogramBarHeight);
-                    using (Brush brush = new SolidBrush(Color.Green))
+                    using (Brush brush = new SolidBrush(Color.FromArgb(100, 80, 0, 255)))
                     {
                         g.FillRectangle(brush, bar);
                         g.DrawRectangle(pen, bar.X, bar.Y, bar.Width, bar.Height);

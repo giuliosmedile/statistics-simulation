@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace _Final_Simulation.Properties
+namespace GiulioSmedile_Simulation.Properties
 {
 
 
